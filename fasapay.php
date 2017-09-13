@@ -14,8 +14,6 @@ function fasapay_plugin_setup_menu() {
 }
 
 function fasapay_init() {
-	$status = get_page_by_title( 'status' )->ID;
-	echo $status;
     ?>
 <h2>Input fasapay into the shopping cart plugin payment system :</h2>
 
