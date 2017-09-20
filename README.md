@@ -52,4 +52,4 @@ Cara Pembayaran Dengan Fasapay
           Pada mode ini anda akan diarahkan menuju halaman sci sandbox fasapay.
         * Live mode
           Pada mode ini akan muncul tombol opsi layan sci fasapay.co.id atau fasapay.com
-          ![GitHub Logo](/images/capture_live_mode.png)
+          ![GitHub Logo](/images/capture_live_Mode.png)
