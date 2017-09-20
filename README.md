@@ -44,6 +44,7 @@ Cara Pembayaran Dengan Fasapay
 ![GitHub Logo](/images/capture_failed.png)
     * Status transaksi pada SmartToko 
 ![GitHub Logo](/images/capture_status.png)
+=============
 *WP eComerce
     * Klik menu checkout pada web ecomerce
     * Isi data billing address dan shipping address > Purchase
