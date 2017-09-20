@@ -44,3 +44,12 @@ Cara Pembayaran Dengan Fasapay
 ![GitHub Logo](/images/capture_failed.png)
     * Status transaksi pada SmartToko 
 ![GitHub Logo](/images/capture_status.png)
+*WP eComerce
+    * Klik menu checkout pada web ecomerce
+    * Isi data billing address dan shipping address > Purchase
+    * Ada dua mode pembayaran yang bisa dilakukan sesuai dengan pengaturan pada option menu admin
+        * Sandbox mode
+          Pada mode ini anda akan diarahkan menuju halaman sci sandbox fasapay.
+        * Live mode
+          Pada mode ini akan muncul tombol opsi layan sci fasapay.co.id atau fasapay.com
+          ![GitHub Logo](/images/capture_live_mode.png)
