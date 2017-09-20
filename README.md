@@ -49,8 +49,8 @@ Cara Pembayaran Dengan Fasapay
     * Klik menu checkout pada web ecomerce
     * Isi data billing address dan shipping address > Purchase
     * Ada dua mode pembayaran yang bisa dilakukan sesuai dengan pengaturan pada option menu admin
-        * Sandbox mode
+        * Sandbox mode, 
           Pada mode ini anda akan diarahkan menuju halaman sci sandbox fasapay.
-        * Live mode
+        * Live mode, 
           Pada mode ini akan muncul tombol opsi layan sci fasapay.co.id atau fasapay.com
           ![GitHub Logo](/images/capture_live_Mode.png)
