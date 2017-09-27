@@ -28,7 +28,7 @@ $nzshpcrt_gateways[$num] = array(
 
 function fp_fasapay_merchant($separator, $sessionid) {	
 		global $wpdb, $wpsc_cart;
-
+		$selz = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix . 'wpsc_currency_list WHERE id = "'.get_option('currency_type').'"' );
     // Initialize the trans result to null
     $_SESSION['fasapay'] = "";
 
@@ -44,19 +44,22 @@ function fp_fasapay_merchant($separator, $sessionid) {
 //	echo "</pre>";
 
 		//VARIABLE`````````````````````````````````````````````````````````````````````````````````````````````````````````````
-		$fp_url = "https://sandbox.fasapay.com/sci/";
-		$fp_acc = get_option('fasapay_akun');
-		$fp_store = get_option('fasapay_store');
+		$fp_url = 'https://sandbox.fasapay.com/sci/';
+		$fp_acc = get_option('fasa_id');
+		$fp_store = get_option('store_name');
 		$fp_item = '';
 		$fp_amnt = 0;
-		$fp_currency = get_option('fasapay_kurensi');
+		$fp_currency = $selz[0]->code;
 		$fp_comments = '';
 		$fp_merchant_ref = $sessionid;
+		$success = get_option('transact_url') ."/?sessionid=$sessionid&fpres=success";
+		$fail = get_option('transact_url') ."/?sessionid=$sessionid&fpres=failed";
+		$status = get_option('transact_url') ."/?sessionid=$sessionid&fpres=status";	
+	
 		
 		if($fp_currency == 'USD'){
 			$curcode = "$ ";
 		}
-		
 		///GET ITEMS
 		foreach($cart as $item){
 			$fp_item .= $item['name'].", qty:".$item['quantity']."\n";
@@ -66,23 +69,67 @@ function fp_fasapay_merchant($separator, $sessionid) {
 								
 			$fp_comments .= "\n";
 		}
-		////ADD SHIPPING DETAIL
-		
-		
-		
-		///CALCULATE TOTAL PRICE
 		$fp_amnt = $wpsc_cart->calculate_total_price();		
-			
-		///SCI-IPN Setting
-		$fp_success_url = get_option('transact_url') ."/?sessionid=$sessionid&fpres=success";
-		$fp_success_method = 'POST';
-		$fp_fail_url = get_option('transact_url') ."/?sessionid=$sessionid&fpres=failed";
-		$fp_fail_method = 'POST';
-		$fp_status_url = get_option('transact_url') ."/?sessionid=$sessionid&fpres=status";
-		$fp_status_method = 'POST';			
-				
+	
+		$time = date("Y-m-d h:i:sa");
+		$paid = $fp_amnt;
+		$ab = $time."".$paid;
+		$track_id = hash('tiger192,3', $ab);	
+	
 		//BUILDING OUTPUT FORM
-		$output = '
+		$output = "";
+		$sandbox = '
+		<style>
+.spinner {
+  margin: 100px auto 0;
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% { 
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+input {
+  visibility: hidden;
+}
+.Absolute-Center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+</style>
 		<script>
 		window.setTimeout(function() {
 			document.getElementById("fasapay_form").submit();
@@ -90,28 +137,189 @@ function fp_fasapay_merchant($separator, $sessionid) {
 		</script>
 		<center>
 		<center>
-		<img src="https://www.fasapay.com/images/logo-gede.gif" alt="Fasapay - Sistem Pembayaran Online Cepat dan Aman" width="300" height="90">
-		<br>
-		Redirected to FasaPay
+		<br />
+		<br />
+		<img src="https://fasapay.com/images/fasapay_logo.png" alt="Fasapay - Sistem Pembayaran Online Cepat dan Aman" width="300" height="90">
+		<div class="spinner">
+  			<div class="bounce1"></div>
+  			<div class="bounce2"></div>
+  			<div class="bounce3"></div>
+  		</div>
 		<form id="fasapay_form" method="POST" action="'.$fp_url.'"> 		
 		<input type="hidden" name="fp_acc" value="'.$fp_acc.'">
 		<input type="hidden" name="fp_store" value="'.$fp_store.'">
 		<input type="hidden" name="fp_item" value="'.$fp_item.'">
 		<input type="hidden" name="fp_amnt" value="'.$fp_amnt.'">
 		<input type="hidden" name="fp_currency" value="'.$fp_currency.'">
-		<input type="hidden" name="fp_comments" value="'.$fp_comments.'">
-		<input type="hidden" name="fp_merchant_ref" value="'.$fp_merchant_ref.'" /> 
-		<input type="hidden" name="fp_success_url" value="'.$fp_success_url.'" />
-		<input type="hidden" name="fp_success_method" value="'.$fp_success_method.'" />
-		<input type="hidden" name="fp_fail_url" value="'.$fp_fail_url.'" />
-		<input type="hidden" name="fp_fail_method" value="'.$fp_fail_method.'" />
-		<input type="hidden" name="fp_status_url" value="'.$fp_status_url.'" />
-		<input type="hidden" name="fp_status_method" value="'.$fp_status_method.'" />		
-		<input name="pay_with_fasapay" value="Pay with FasaPay" type="submit">
+		<input type="hidden" name="fp_comments" value="">
+		<input type="hidden" name="fp_merchant_ref" value="" /> 
+		<input type="hidden" name="fp_success_url" value="'.$success.'" />
+		<input type="hidden" name="fp_success_method" value="POST" />
+		<input type="hidden" name="fp_fail_url" value="'.$fail.'" />
+		<input type="hidden" name="fp_fail_method" value="POST" />
+		<input type="hidden" name="fp_status_url" value="'.$status.'" />
+		<input type="hidden" name="fp_status_method" value="POST" />	
+		<input type="hidden" name="track_id" value="'.$track_id.'">
+    			<input type="hidden" name="order_id" value="'.$sessionid.'">
+		<input name="pay_with_fasapay" value="Pay with FasaPay" type="submit" display:"none">
 		</form>
 		</center>
 		';
+		$live = '
+		<style>
+.spinner {
+  margin: 100px auto 0;
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% { 
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+.btn-group .button {
+    background-color: #4CAF50; /* Green */
+    border: 1px solid green;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+.btn-group .button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+.btn-group .button:hover {
+    background-color: #3e8e41;
+}
+.Absolute-Center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+#loaders{
+margin-top:30%;
+display:none;
+}
+#hiders{
+display:block;
+}
+</style>
+<script>
+function facom(){
+		var x = document.getElementById("loaders");
+		var y = document.getElementById("hiders");
+        x.style.display = "block";
+        y.style.display = "none";
 		
+		window.setTimeout(function() {
+			document.getElementById("fasapay_form_com").submit();
+		}, 5000);
+		}
+function faid(){
+		var x = document.getElementById("loaders");
+		var y = document.getElementById("hiders");
+        x.style.display = "block";
+        y.style.display = "none";
+		
+		window.setTimeout(function() {
+			document.getElementById("fasapay_form_id").submit();
+		}, 5000);
+		}
+</script>
+	
+		<center>
+		<div id="hiders">
+		<br />
+		<br />
+		<img src="https://fasapay.com/images/fasapay_logo.png" alt="Fasapay - Sistem Pembayaran Online Cepat dan Aman" width="300" height="90">
+		<form id="fasapay_form_com" method="POST" action="https://fasapay.com/"> 		
+		<input type="hidden" name="fp_acc" value="'.$fp_acc.'">
+		<input type="hidden" name="fp_store" value="'.$fp_store.'">
+		<input type="hidden" name="fp_item" value="'.$fp_item.'">
+		<input type="hidden" name="fp_amnt" value="'.$fp_amnt.'">
+		<input type="hidden" name="fp_currency" value="'.$fp_currency.'">
+		<input type="hidden" name="fp_comments" value="">
+		<input type="hidden" name="fp_merchant_ref" value="" /> 
+		<input type="hidden" name="fp_success_url" value="'.$success.'" />
+		<input type="hidden" name="fp_success_method" value="POST" />
+		<input type="hidden" name="fp_fail_url" value="'.$fail.'" />
+		<input type="hidden" name="fp_fail_method" value="POST" />
+		<input type="hidden" name="fp_status_url" value="'.$status.'" />
+		<input type="hidden" name="fp_status_method" value="POST" />		
+		</form>
+		<form id="fasapay_form_id" method="POST" action="https://fasapay.co.id/"> 		
+		<input type="hidden" name="fp_acc" value="'.$fp_acc.'">
+		<input type="hidden" name="fp_store" value="'.$fp_store.'">
+		<input type="hidden" name="fp_item" value="'.$fp_item.'">
+		<input type="hidden" name="fp_amnt" value="'.$fp_amnt.'">
+		<input type="hidden" name="fp_currency" value="'.$fp_currency.'">
+		<input type="hidden" name="fp_comments" value="">
+		<input type="hidden" name="fp_merchant_ref" value="" /> 
+		<input type="hidden" name="fp_success_url" value="'.$success.'" />
+		<input type="hidden" name="fp_success_method" value="POST" />
+		<input type="hidden" name="fp_fail_url" value="'.$fail.'" />
+		<input type="hidden" name="fp_fail_method" value="POST" />
+		<input type="hidden" name="fp_status_url" value="'.$status.'" />
+		<input type="hidden" name="fp_status_method" value="POST" />		
+		</form>
+		<div class="btn-group">  			
+		';
+		$facom = '<button class="button" onclick="facom()">FASAPAY.COM</button>';
+		$faid='<button class="button" onclick="faid()">FASAPAY.CO.ID</button>';
+	    $foot_plus = '</div>
+		</div>
+		</center>
+		<center>
+		<div class="spinner" id="loaders">
+  			<div class="bounce1"></div>
+  			<div class="bounce2"></div>
+  			<div class="bounce3"></div>
+  		</div>
+		</center>';
+			
+		if(get_option('mode') == 'sandbox_mode'){
+			$output = $sandbox;
+		}else if(get_option('mode') == 'live_mode'){
+			if($selz[0]->code == "IDR"){
+				$output = $live.' '.$facom.' '.$faid.' '.$foot_plus;
+			}else if($selz[0]->code == "USD"){
+				$output = $live.' '.$facom.' '.$foot_plus;
+			}			
+		}
 		echo $output;
 	 	exit();		
 }
@@ -119,54 +327,70 @@ function fp_fasapay_merchant($separator, $sessionid) {
 
 
 function submit_fasapay(){
-	if(isset($_POST['fasapay_akun']))
-    {
-    	update_option('fasapay_akun', $_POST['fasapay_akun']);
-    }
-	if(isset($_POST['fasapay_store']))
-    {
-    	update_option('fasapay_store', $_POST['fasapay_store']);
-    }
-	if(isset($_POST['fasapay_kurensi']))
-    {
-    	update_option('fasapay_kurensi', $_POST['fasapay_kurensi']);
-    }	
-	return true;		
+			
 }
 
 function form_fasapay() {
-	$fasapay_akun = get_option('fasapay_akun');
-	$fasapay_store = get_option('fasapay_store');
-	$fasapay_kurensi = (get_option('fasapay_kurensi')== "") ? "IDR" : get_option('fasapay_kurensi');
-	
+	global $wpdb, $wpsc_cart;
+	$selz = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix . 'wpsc_currency_list WHERE id = "'.get_option('currency_type').'"' );
+	$fasapay_sandbox = get_option('fasa_id');
+	$fasapay_fa_id = get_option('fasa_co_id');
+	$fasapay_fa_com = get_option('fasa_com');
+	$fasapay_store = get_option('store_name');
+	$fasapay_scurity = get_option('word_scurity');
+	$fasapay_kurensi = $selz[0]->code;
+	$success = get_page_by_title("success")->guid;
+	$fail = get_page_by_title( "fail" )->guid;
+	$status = get_page_by_title( "status" )->guid;
 	$output = '
-  		<tr>
-			<td style="width:120px"><label for="fasapay_akun">FasaPay Akun</label></td>
-			<td>
-			  <input name="fasapay_akun" type="text" id="fasapay_akun" value="'.$fasapay_akun.'">
-			  <br />
-			<small>Nomor Akun Fasapay anda</small></td>
-		</tr>
-		<tr>
-			<td><label for="fasapay_store">FasaPay Store</label></td>
-			<td><input name="fasapay_store" type="text" id="fasapay_store" value="'.$fasapay_store.'">
-			  <br />
-			<small>
-			Nama Merchant store, akan muncul sebagai Header di halaman transaksi.<br />
-			Jika Anda sudah membuat store di FasaPay (khusus anggota FasaPay berstatus Store) maka dia dapat memanfaatkan advance mode. Buat store <a href="https://www.fasapay.com/store" target="_blank">disini</a><br />
-            <br />Success Url : <br /><input type="text" value="'.get_option('transact_url')."/?sessionid=$sessionid&fpres=success".'" readonly="readonly" />
-			<br />Fail Url : <br /><input type="text" value="'.get_option('transact_url')."/?sessionid=$sessionid&fpres=fail".'" readonly="readonly" />
-			<br />Status Url : <br /><input type="text" value="'.get_option('transact_url')."/?sessionid=$sessionid&fpres=status".'" readonly="readonly" />			
-			</small>
-			
-			</td>
-		</tr>
+	<style>
+	input[type=text] {
+    width: 100%;
+    padding: 7px 20px;
+    margin: 4px 0;
+    box-sizing: border-box;
+	}
+	</style>
+	  <tr>
+		  <td style="width:30%;"><b>Url Success</b><br><small>link halaman landing page pembayaran sukses</small></td>
+		  <td> <input disabled style="width:80%;" type="text" id="cp_success" value="'.$success.'"></td>
+	  </tr>
+	  <tr>
+		  <td style="width:30%;"><b>Url Fail</b><br><small>link halaman landing page pembayaran gagal</small></td>
+		  <td> <input disabled style="width:80%" type="text" id="cp_fail" value="'.$fail.'"></td>
+	  </tr>	
+	  <tr>
+		  <td style="width:30%;"><b>Url Status</b><br><small>link halaman  untuk ,melakukan proses validasi ketika pembayaran lunas</small></td>
+		  <td> <input disabled style="width:80%" type="text" id="cp_status" value="'.$status.'"></td>
+	  </tr> 
+	  
+	<tr>
+		<td style="width:30%;"><b>Store Name</b></td>
+		<td> <input disabled style="width:80%" type="text" id="cp_store_name" value="'.$fasapay_store.'"></td>
+	  </tr>
+	  <tr>
+		  <td style="width:30%;"><b>Scurity Word</b></td>
+		  <td> <input disabled style="width:80%" type="text" id="cp_word_scurity" value="'.$fasapay_scurity.'"></td>
+	  </tr>
+	<tr>
+		  <td style="width:30%;"><b>Fasapay Store Id</b></td>
+		  <td>
+			  <input disabled style="width:60%" type="text" id="cp_fasaid" value="'.$fasapay_sandbox.'">
+			  <input disabled style="width:60%" type="text" id="cp_fasacoid" value="'.$fasapay_fa_id.'">
+			  <input disabled style="width:60%" type="text" id="cp_fasacom" value="'.$fasapay_fa_com.'">
+		  </td>
+	  </tr>
+	  
 		<tr>
 			<td style="width:120px"><label for="fasapay_kurensi">FasaPay Kurensi</label></td>
 			<td>
-			  <input name="fasapay_kurensi" type="text" id="fasapay_kurensi" value="'.$fasapay_kurensi.'">
+			  <input disabled name="fasapay_kurensi" type="text" id="fasapay_kurensi" value="'.$fasapay_kurensi.'">
 			  <br />
 			<small>Kurensi yang digunakan untuk transaksi (IDR,USD)</small></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>Untuk melakukan editing silahkan masuk option menu fasapay plugins</td>
 		</tr>
 		';
 	

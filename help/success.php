@@ -22,7 +22,7 @@
 </table>
 <hr />
 <?php 
-
+	
 	unset($_SESSION['cart']);
 	unset($_SESSION['max_cart']); 
 ?>
