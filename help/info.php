@@ -1,16 +1,19 @@
+<?php 
+	include '../wp-content/plugins/fasapay/help/lib/get_url.php';
+?>
 <h3>FasaPay Status</h3><hr />
   <table>
 	  <tr>
 		  <td style="width:30%;"><b>Url Success</b><p>link halaman landing page pembayaran sukses</p></td>
-		  <td> <input style="width:80%;" type="text" id="cp_success" value="<?php echo get_page_by_title( 'success' )->guid;?>"><button onclick="copyarea('cp_success')">Copy</button><hr /></td>
+		  <td> <input style="width:80%;" type="text" id="cp_success" value="<?php echo get_success();?>"><button onclick="copyarea('cp_success')">Copy</button><hr /></td>
 	  </tr>
 	  <tr>
 		  <td style="width:30%;"><b>Url Fail</b><p>link halaman landing page pembayaran gagal</p></td>
-		  <td> <input style="width:80%" type="text" id="cp_fail" value="<?php echo get_page_by_title( 'fail' )->guid;?>"><button onclick="copyarea('cp_fail')">Copy</button><hr /></td>
+		  <td> <input style="width:80%" type="text" id="cp_fail" value="<?php echo get_fail();?>"><button onclick="copyarea('cp_fail')">Copy</button><hr /></td>
 	  </tr>	
 	  <tr>
 		  <td style="width:30%;"><b>Url Status</b><p>link halaman  untuk ,melakukan proses validasi ketika pembayaran lunas</p></td>
-		  <td> <input style="width:80%" type="text" id="cp_status" value="<?php echo get_page_by_title( 'status' )->guid;?>"><button onclick="copyarea('cp_status')">Copy</button><hr /></td>
+		  <td> <input style="width:80%" type="text" id="cp_status" value="<?php echo get_status();?>"><button onclick="copyarea('cp_status')">Copy</button><hr /></td>
 	  </tr>  
   </table>
 <hr />

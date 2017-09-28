@@ -54,9 +54,9 @@ function fp_fasapay_merchant($separator, $sessionid) {
 		$fp_currency = $selz[0]->code;
 		$fp_comments = '';
 		$fp_merchant_ref = $sessionid;
-		$success = get_option('transact_url') ."/?sessionid=$sessionid&fpres=success";
-		$fail = get_option('transact_url') ."/?sessionid=$sessionid&fpres=failed";
-		$status = get_option('transact_url') ."/?sessionid=$sessionid&fpres=status";	
+		$success = get_option('transact_url') ."?sessionid=$sessionid&fpres=success";
+		$fail = get_option('transact_url') ."?sessionid=$sessionid&fpres=failed";
+		$status = get_option('transact_url') ."?sessionid=$sessionid&fpres=status";	
 	
 		
 		if($fp_currency == 'USD'){
