@@ -1,5 +1,5 @@
 <?php
-global $wpdb, $user_ID;
+global $wpdb;
 if (get_option('fasa_id') == filter_input(INPUT_POST, 'fp_paidto')) {
     $merchantAccountNumber = get_option('fasa_id');
 } else if (get_option('fasa_co_id') == filter_input(INPUT_POST, 'fp_paidto')) {

@@ -29,12 +29,15 @@ $msg .= filter_input(INPUT_POST, 'track_id') . '|';
 $fp_hmac_temp = hash_hmac('sha256', $msg, $merchantSecurityWord);
 $fp_hmac = $fp_hmac_temp . '' . $msg;
 global $wpdb;
+$selz = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix . 'wpsc_currency_list WHERE id = "'.get_option('currency_type').'"' );
+$curensi = $selz[0]->code;
 $session_id = filter_input(INPUT_POST, 'order_id');
 $check = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . 'wpsc_purchase_logs WHERE sessionid = "' . $session_id . '"');
 
 if (strtoupper(filter_input(INPUT_POST, 'fp_paidto')) == strtoupper($merchantAccountNumber) &&
         strtoupper(filter_input(INPUT_POST, 'fp_store')) == strtoupper($merchantStoreName) &&
         strtoupper(filter_input(INPUT_POST, 'fp_hmac')) == strtoupper($fp_hmac) &&
+        strtoupper(filter_input(INPUT_POST, 'fp_currency')) == strtoupper($curensi) &&
         strtoupper(filter_input(INPUT_POST, 'fp_amnt')) == strtoupper($check[0]->totalprice)) {
     $order = filter_input(INPUT_POST, 'order_id');
     $track = filter_input(INPUT_POST, 'track_id');
