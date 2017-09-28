@@ -242,31 +242,35 @@ if(isset($_POST['submit']))
 			}
 			if($pay_order == 'Fasapay' || $pay_order == 'Fasapaycoid' || $pay_order == 'Fasapaycom'){
 				$totalAmount = LapakInstan_Function::strip_to_numbers_only($nilai_pesanan);
-				$miscFee = LapakInstan_Function::strip_to_numbers_only($_POST['ongkir']);	
+				$miscFee = LapakInstan_Function::strip_to_numbers_only($_POST['ongkir']).'.00';	
 				$transactionNo = $id_order;
 				$sharedkey = get_option( 'shopingcard' );
 				$ttaal = $totalAmount+$miscFee;
 				$words = sha1($ttaal.$sharedkey.$transactionNo);
 				$url_fasa = '';
+				$fasapay_acc = '';
 				if($pay_order == 'Fasapay'){
 					$url_fasa = 'http://sandbox.fasapay.com/sci/';
+					$fasapay_acc = get_option( 'fasa_id' );
 				}else if($pay_order == 'Fasapaycoid'){
-					$url_fasa = 'http://sandbox.fasapay.com/sci/';
+					$url_fasa = 'https://fasapay.co.id/sci';
+					update_option( 'fasa_choice', $fasapay_acc );
 				}else if($pay_order == 'Fasapaycom'){
 					$url_fasa = 'https://sci.fasapay.com/';
+					$fasapay_acc = get_option( 'fasa_com' );
 				}
-				
 				$table_name = $wpdb->prefix . "smart_report_log";
-				$results = $wpdb->insert($table_name, array('id_order'=>$id_order, 'id_mem'=>$daftar, 'tanggal_order'=>$tanggal_order,  'nilai_pesanan'=>$nilai_pesanan, 'pay_order'=>$pay_order, 'uang_terima'=>$totalAmount, 'status'=>$status, 'pm_detail'=>$pm_detail, 'pm_produk'=>$pm_produk, 'sortorder'=>$words, 'aff_id'=>$aff_id));
+				$results = $wpdb->insert($table_name, array('id_order'=>$id_order, 'id_mem'=>$daftar, 'tanggal_order'=>$tanggal_order,  'nilai_pesanan'=>$ttaal, 'pay_order'=>$pay_order, 'uang_terima'=>$totalAmount, 'status'=>$status, 'pm_detail'=>$pm_detail, 'pm_produk'=>$pm_produk, 'sortorder'=>$words, 'aff_id'=>$aff_id));
 				if($words){
 				echo '<div class="sup-bar" style="background: #DBFFD0;border-color: #2D9014;text-align: center;color: #333;"><h3><img src="'.get_bloginfo('template_url').'/images/ajax-loader.gif" /> Fasapay Shoping cart interface redirect !</h3><p>This page will be redirect to Fasapay shoping cart interface page in 3 seconds.</p></div>
 				<div style="display:none;">';
 				echo '<form id="form1" id="form_auto_posts" name="form_auto_posts" method="post" action="'.$url_fasa.'">
-				<input type="hidden" name="fp_acc" value="'.get_option( 'fasa_id' ).'">
+				<input type="hidden" name="fp_acc" value="'.$fasapay_acc.'">
     			<input type="hidden" name="fp_store" value="ECOMERCE">
     			<input type="hidden" name="fp_item" value="Order ID #">
     			<input type="hidden" name="fp_amnt" value="'.($ttaal).'">
     			<input type="hidden" name="fp_currency" value="IDR">
+    			<input type="hidden" name="fp_fee_mode" value="'.get_option( 'fee_mode' ).'">
     			<input type="hidden" name="fp_comments" value="Pembayaran menggunakan store variable">
     			<input type="hidden" name="fp_merchant_ref" value="'.$storeid.'" />
 				<input type="hidden" name="fp_success_url" value="'.get_page_by_title( 'success' )->guid.'" />

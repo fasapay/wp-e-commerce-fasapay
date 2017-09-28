@@ -1,10 +1,16 @@
 <?php
 
-$merchantAccountNumber = get_option('fasa_id');
+if (get_option('fasa_id') == filter_input(INPUT_POST, 'fp_paidto')) {
+    $merchantAccountNumber = get_option('fasa_id');
+} else if (get_option('fasa_co_id') == filter_input(INPUT_POST, 'fp_paidto')) {
+    $merchantAccountNumber = get_option('fasa_co_id');
+} else if (get_option('fasa_com') == filter_input(INPUT_POST, 'fp_paidto')) {
+    $merchantAccountNumber = get_option('fasa_com');
+}
+
 $merchantStoreName = get_option('store_name');
 $merchantSecurityWord = get_option('word_scurity');
 $msg = '';
-
 $msg .= filter_input(INPUT_POST, 'fp_amnt') . '|';
 $msg .= filter_input(INPUT_POST, 'fp_batchnumber') . '|';
 $msg .= filter_input(INPUT_POST, 'fp_currency') . '|';
