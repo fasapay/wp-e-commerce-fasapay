@@ -25,10 +25,13 @@ $fp_hmac_temp = hash_hmac('sha256', $msg, $merchantSecurityWord);
 $fp_hmac = $fp_hmac_temp.''.$msg;
 
 $order = filter_input(INPUT_POST, 'order_id');
-if( isset($_POST['fp_paidto']) && strtoupper(filter_input(INPUT_POST, 'fp_paidto')) == strtoupper($merchantAccountNumber) &&
-	isset($_POST['fp_store']) && strtoupper(filter_input(INPUT_POST, 'fp_store')) == strtoupper($merchantStoreName) &&
-	isset($_POST['fp_hmac']) && strtoupper(filter_input(INPUT_POST, 'fp_hmac')) == strtoupper($fp_hmac)){
-		$selz = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix . 'smart_report_log WHERE id_order = "'.$order.'"' );
-		$data = $wpdb->insert($wpdb->prefix . "smart_report", array('id_order'=>$selz[0]->id_order, 'id_mem'=>$selz[0]->id_mem, 'tanggal_order'=>$selz[0]->tanggal_order,  'nilai_pesanan'=>$selz[0]->nilai_pesanan, 'pay_order'=>'Fasapay', 'uang_terima'=>$selz[0]->uang_terima, 'uang_terima'=>$selz[0]->uang_terima, 'status'=>'transaksi_lunas', 'pm_detail'=>$selz[0]->pm_detail, 'pm_produk'=>$selz[0]->pm_produk, 'sortorder'=>$selz[0]->sortorder,'aff_id'=>$selz[0]->aff_id));
+if( strtoupper(filter_input(INPUT_POST, 'fp_paidto')) == strtoupper($merchantAccountNumber) &&
+	strtoupper(filter_input(INPUT_POST, 'fp_store')) == strtoupper($merchantStoreName) &&
+	strtoupper(filter_input(INPUT_POST, 'fp_hmac')) == strtoupper($fp_hmac)){
+		if($selz = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix . 'smart_report_log WHERE id_order = "'.$order.'"' )){
+			if($selz[0]->nilai_pesanan == filter_input(INPUT_POST, 'fp_amnt')){
+				$data = $wpdb->insert($wpdb->prefix . "smart_report", array('id_order'=>$selz[0]->id_order, 'id_mem'=>$selz[0]->id_mem, 'tanggal_order'=>$selz[0]->tanggal_order,  'nilai_pesanan'=>$selz[0]->nilai_pesanan, 'pay_order'=>'Fasapay', 'uang_terima'=>$selz[0]->uang_terima, 'uang_terima'=>$selz[0]->uang_terima, 'status'=>'transaksi_lunas', 'pm_detail'=>$selz[0]->pm_detail, 'pm_produk'=>$selz[0]->pm_produk, 'sortorder'=>$selz[0]->sortorder,'aff_id'=>$selz[0]->aff_id));
+			}
+		}
 }
 ?>

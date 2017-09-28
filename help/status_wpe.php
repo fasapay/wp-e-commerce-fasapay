@@ -26,9 +26,9 @@ global $wpdb;
 $session_id = filter_input(INPUT_POST, 'order_id');
 $check = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . 'wpsc_purchase_logs WHERE sessionid = "' . $session_id . '"');
 
-if (isset($_POST['fp_paidto']) && strtoupper(filter_input(INPUT_POST, 'fp_paidto')) == strtoupper($merchantAccountNumber) &&
-        isset($_POST['fp_store']) && strtoupper(filter_input(INPUT_POST, 'fp_store')) == strtoupper($merchantStoreName) &&
-        isset($_POST['fp_hmac']) && strtoupper(filter_input(INPUT_POST, 'fp_hmac')) == strtoupper($fp_hmac) &&
+if (strtoupper(filter_input(INPUT_POST, 'fp_paidto')) == strtoupper($merchantAccountNumber) &&
+        strtoupper(filter_input(INPUT_POST, 'fp_store')) == strtoupper($merchantStoreName) &&
+        strtoupper(filter_input(INPUT_POST, 'fp_hmac')) == strtoupper($fp_hmac) &&
         strtoupper(filter_input(INPUT_POST, 'fp_amnt')) == strtoupper($check[0]->totalprice)) {
     $order = filter_input(INPUT_POST, 'order_id');
     $track = filter_input(INPUT_POST, 'track_id');
