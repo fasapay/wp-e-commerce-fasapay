@@ -27,6 +27,14 @@
 		  <td> <input style="width:80%" type="text" id="cp_word_scurity" value="<?php echo get_option('word_scurity	');?>"><button onclick="copyarea('cp_word_scurity')">Copy</button> </td>
 	  </tr>
 	<tr>
+		  <td style="width:30%;"><b>Fee MOde</b></td>
+		  <td>
+					<input disabled type="radio" name="fee_mode" value="FiR" <?php echo ($fee_mode == 'FiR') ? 'checked' : '' ?> /> Fee on Recipient
+  					<input disabled type="radio" name="fee_mode" value="FiS" <?php echo ($fee_mode == 'FiS') ? 'checked' : '' ?> /> Fee on Sender
+  					<input disabled type="radio" name="fee_mode" value="FsC" <?php echo ($fee_mode == 'FsC') ? 'checked' : '' ?> /> Fee on Sender Choice
+		  </td>
+	  </tr>
+	<tr>
 		  <td style="width:30%;"><b>Fasapay Store Id</b></td>
 		  <td>
 			 <?php if(get_option('fasa_id')){?>

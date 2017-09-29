@@ -4,7 +4,7 @@ div.tab {
     border: 1px solid #ccc;
     background-color: #f1f1f1;
     width: 20%;
-    height: 600px;
+    height: 730px;
 	
 	border-left:10px solid #000;
 }
@@ -41,7 +41,7 @@ div.tab button.active {
     border: 1px solid #ccc;
     width: 70%;
     border-left: none;
-    height: 600px;
+    height: 730px;
 }
 td {
 	padding:3px;

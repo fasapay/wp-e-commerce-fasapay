@@ -15,6 +15,7 @@
         add_option('shopingcard', 'wpecomerce', '', 'yes');
         add_option('store_name', $_POST['store_name'], '', 'yes');
         add_option('word_scurity', $_POST['word_scurity'], '', 'yes');
+        add_option('fee_mode', $_POST['fee_mode'], '', 'yes');
 		if(isset($_POST['mode'])){
 			if($_POST['mode'] == 'sandbox_mode'){
 			update_option( 'mode', 'sandbox_mode' );
@@ -29,11 +30,9 @@
 		$custom_gateways = get_option('custom_gateway_options');
 		array_push($custom_gateways,"fp_fasapay_merchant");
 		update_option('custom_gateway_options', $custom_gateways);
+  		echo "<script type='text/javascript'>window.location.reload();</script>";
     endif;
 	}
-	include "../wp-content/plugins/fasapay/help/cart_update.php";		   
-    if (get_option('shopingcard')) {
-        echo "Fasapay payment gateway ditambahkan pada plugin shoping card " . get_option('shopingcard');
-    }
+	include "../wp-content/plugins/fasapay/help/cart_update.php";	
 ?>
 

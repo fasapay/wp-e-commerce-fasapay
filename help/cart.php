@@ -5,6 +5,15 @@
 	if (get_option('mode')) {
         $modechoice = get_option('mode');
     }
+ 	if (get_option('fee_mode')) {
+		if(get_option('fee_mode') == 'FiR'){
+			$fee_mode = get_option('fee_mode');
+		}else if(get_option('fee_mode') == 'FiS'){
+			$fee_mode = get_option('fee_mode');
+		}else{
+			$fee_mode = get_option('fee_mode');
+		}
+	}
     ?>
     <form name="mp_form" method="post" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>">	
 		<h2>FasaPay Plugins Option</h2>
@@ -47,6 +56,17 @@
 				</td>
 			</tr>		
 		</table>
+		<hr>
+		<table>
+			<tr>
+				<td style="width:30%;"><b>Fee Mode</b><p>Fee mode setting digunakan untuk menentukan pengaturan biaya transaksi </p></td>
+				<td>
+					<input type="radio" name="fee_mode" value="FiR" <?php echo ($fee_mode == 'FiR') ? 'checked' : '' ?> /> Fee on Recipient
+  					<input type="radio" name="fee_mode" value="FiS" <?php echo ($fee_mode == 'FiS') ? 'checked' : '' ?> /> Fee on Sender
+  					<input type="radio" name="fee_mode" value="FsC" <?php echo ($fee_mode == 'FsC') ? 'checked' : '' ?> /> Fee on Sender Choice
+				</td>
+			</tr>		
+		</table>
 		<table>
 			<tr>
 				<td style="width:30%;"></td>
@@ -59,7 +79,6 @@
 				</td>
 			</tr>		
 		</table>
-		<hr />
     </form>
 
     <?php
@@ -67,6 +86,7 @@
     if (isset($_POST['sci']) && $_POST['sci'] === 'lapakinstan'){
             add_option('shopingcard', 'lapakinstan', '', 'yes');
             add_option('store_name', $_POST['store_name'], '', 'yes');
+            add_option('fee_mode', $_POST['fee_mode'], '', 'yes');
             add_option('word_scurity', $_POST['word_scurity'], '', 'yes');
 		if(isset($_POST['mode'])){
 			if($_POST['mode'] == 'sandbox_mode'){
@@ -108,6 +128,8 @@
             wp_insert_post($status);
             wp_insert_post($success);
             wp_insert_post($fail);
+  		echo "<script type='text/javascript'>window.location.reload();</script>";
 	}
 	}
+	include '../wp-content/plugins/fasapay/help/wp_ecomerce.php';
 	?>

@@ -152,6 +152,7 @@ input {
 		<input type="hidden" name="fp_store" value="'.$fp_store.'">
 		<input type="hidden" name="fp_item" value="'.$fp_item.'">
 		<input type="hidden" name="fp_amnt" value="'.$fp_amnt.'">
+    			<input type="hidden" name="fp_fee_mode" value="'.get_option( 'fee_mode' ).'">
 		<input type="hidden" name="fp_currency" value="'.$fp_currency.'">
 		<input type="hidden" name="fp_comments" value="">
 		<input type="hidden" name="fp_merchant_ref" value="" /> 
@@ -273,6 +274,7 @@ function faid(){
 		<input type="hidden" name="fp_store" value="'.$fp_store.'">
 		<input type="hidden" name="fp_item" value="'.$fp_item.'">
 		<input type="hidden" name="fp_amnt" value="'.$fp_amnt.'">
+    			<input type="hidden" name="fp_fee_mode" value="'.get_option( 'fee_mode' ).'">
 		<input type="hidden" name="fp_currency" value="'.$fp_currency.'">
 		<input type="hidden" name="fp_comments" value="">
 		<input type="hidden" name="fp_merchant_ref" value="" /> 
@@ -290,6 +292,7 @@ function faid(){
 		<input type="hidden" name="fp_store" value="'.$fp_store.'">
 		<input type="hidden" name="fp_item" value="'.$fp_item.'">
 		<input type="hidden" name="fp_amnt" value="'.$fp_amnt.'">
+    			<input type="hidden" name="fp_fee_mode" value="'.get_option( 'fee_mode' ).'">
 		<input type="hidden" name="fp_currency" value="'.$fp_currency.'">
 		<input type="hidden" name="fp_comments" value="">
 		<input type="hidden" name="fp_merchant_ref" value="" /> 

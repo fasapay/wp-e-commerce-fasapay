@@ -14,7 +14,7 @@
 
 <?php
 	if (get_option('shopingcard')) {
-        echo "Fasapay payment gateway status <i style='color:red;'> Active</i> <b>" . get_option('shopingcard')."</b>";
+        echo "Fasapay payment gateway status <i style='color:red;'> Active </i><b>" . get_option('shopingcard')."</b>";
     }else{
 		echo "Fasapay payment gateway status <i style='color:red;'> Nonactive</i>";
 	}
@@ -26,6 +26,7 @@
 		wp_delete_post($statusid, true);
 		wp_delete_post($successid, true);
 		wp_delete_post($failid, true);
+		delete_option( 'fee_mode' );
 		
 		if(get_option('shopingcard')){	
 		delete_option( 'shopingcard' );
@@ -45,7 +46,7 @@
 		
 		include "../wp-content/plugins/fasapay/help/restore.php";
 		$message = "Fasapay plugins success to restore";
-  		echo "<script type='text/javascript'>alert('$message');</script>";
+  		echo "<script type='text/javascript'>window.location.reload();</script>";
 		}
 		}else if(get_option('shopingcard') == 'wpecomerce'){
 			$statusid = get_page_by_title( 'status' )->ID;
@@ -57,7 +58,7 @@
 			delete_option( 'shopingcard' );
 			delete_option( 'store_name' );
 			delete_option( 'word_scurity' );
-			
+			delete_option( 'fee_mode' );
 			if(get_option('mode') == 'sandbox_mode'){
 		  	delete_option( 'mode' );
 		  	delete_option( 'fasa_id' );
@@ -99,6 +100,8 @@
 				}
 			}
 			update_option('custom_gateway_options', $custom_gateways);	
+			
+  		echo "<script type='text/javascript'>window.location.reload();</script>";
 		}
 	}
 
