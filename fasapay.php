@@ -1,57 +1,63 @@
-
 <?php
-
 /**
  * Plugin Name: Fasapay
- * Plugin URI: https://fasapay.com/
+ * Plugin URI: https://github.com/fasapay/wp-e-commerce-fasapay
  * Description: E-payment gateway plugins
- * Version: 1.0
+ * Version: 2.0
  * Author: Fasapay
- * Author URI: https://fasapay.com/
+ * Author URI: http://www.fasapay.com
  */
-function mp_admin_actions() {
-    add_options_page("Fasapay Plugin Setting", "Fasapay Plugin Setting", 1, "Fasapay_pluggin_setting", "fp_admin");
+add_action('admin_menu', 'fasapay_plugin_setup_menu');
+
+function fasapay_plugin_setup_menu() {
+    add_menu_page('Fasapay Plugin Page', 'Fasapay', 'manage_options', 'test-plugin', 'fasapay_init', plugins_url('fasapay/images/icons.png'), 7);
 }
+if( ! function_exists('will_bontrager_insert_php') )
+{
 
-add_action('admin_menu', 'mp_admin_actions');
-?>
+	function will_bontrager_insert_php($content)
+	{
+		$will_bontrager_content = $content;
+		preg_match_all('!\[insert_php[^\]]*\](.*?)\[/insert_php[^\]]*\]!is',$will_bontrager_content,$will_bontrager_matches);
+		$will_bontrager_nummatches = count($will_bontrager_matches[0]);
+		for( $will_bontrager_i=0; $will_bontrager_i<$will_bontrager_nummatches; $will_bontrager_i++ )
+		{
+			ob_start();
+			eval($will_bontrager_matches[1][$will_bontrager_i]);
+			$will_bontrager_replacement = ob_get_contents();
+			ob_clean();
+			ob_end_flush();
+			$will_bontrager_content = preg_replace('/'.preg_quote($will_bontrager_matches[0][$will_bontrager_i],'/').'/',$will_bontrager_replacement,$will_bontrager_content,1);
+		}
+		return $will_bontrager_content;
+	} # function will_bontrager_insert_php()
 
-<?php
+	add_filter( 'the_content', 'will_bontrager_insert_php', 9 );
 
-function fp_admin() { ?>
-    <!--ceck fasapay plugin to shoping card ready -->
-    <?php
-    $myFile = "../wp-content/plugins/wp-e-commerce/wpsc-merchants/fasapay.merchant.php";
-    if (fopen($myFile, 'r')) {
-        $wpecomerce = 'choice';
-    }
+}
+function fasapay_init() {
     ?>
+<h2>Input fasapay into the shopping cart plugin payment system :</h2>
 
-    <form name="mp_form" method="post" action="<?php echo str_replace('%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-        <h2>Input fasapay into the shopping cart plugin payment system :</h2>
-        <hr>	
-        <input type="hidden" name="mp_hidden" value="Y">
-        <p><input type="radio" name="sci" value="wpecomerce" <?php echo ($wpecomerce == 'choice') ? 'checked' : '' ?> > WP-Ecomerce</p>
-        <p><input type="radio" name="sci" value="cart66"> Cart66</p>
-        <p class="submit">
-            <input type="submit" name="Submit" value="<?php _e('Add to shoping card plugins', 'mp') ?>" />
-        </p>
-    </form>
+    <!--ceck fasapay plug to shoping card ready -->
+<div class="tab">
+	<br>
+  <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'cart')"><img src="<?php echo  plugins_url('fasapay/images/cart.png');?>" width="15px"> Shoping Cart</button>
+	<button class="tablinks" onclick="openCity(event, 'setting')"><img src="<?php echo  plugins_url('fasapay/images/setting.png');?>"width="15px"> Setting</button>
+  <button class="tablinks" onclick="openCity(event, 'info')"><img src="<?php echo  plugins_url('fasapay/images/info.png');?>"width="13px"> Info</button>
+</div>
 
-    <?php
-    if (isset($_POST['sci']) && $_POST['sci'] === 'wpecomerce'):
-        $myFile = "../wp-content/plugins/fasapay/fasapay.merchant.php";
-        $myFileLink = fopen($myFile, 'r');
-        $myFileContents = fread($myFileLink, filesize($myFile));
-        fclose($myFileLink);
-        $fileLocation = "../wp-content/plugins/wp-e-commerce/wpsc-merchants/fasapay.merchant.php";
-        $file = fopen($fileLocation, "w");
-        $content = $myFileContents;
-        fwrite($file, $content);
-        fclose($file);
-    endif;
-    if (fopen($myFile, 'r')) {
-        echo "Fasapay payment gateway ditambahkan pada plugin shoping card WP-Ecomerce";
-    }
-    echo "<hr><a target='_blank' href='https://fasapay.com/'><img src='https://fasapay.com/images/fasapay_logo.png'></a>";
+<div id="cart" class="tabcontent">	
+	<?php include "../wp-content/plugins/fasapay/help/cart.php"; ?>
+</div>
+
+<div id="setting" class="tabcontent" style="display:none;">
+  <?php include "../wp-content/plugins/fasapay/help/setting.php"; ?>
+</div>
+<div id="info" class="tabcontent" style="display:none;">
+	<?php include "../wp-content/plugins/fasapay/help/info.php"; ?>
+</div>
+<style><?php include '../wp-content/plugins/fasapay/asset/css/style.css'; ?></style>
+<script><?php include '../wp-content/plugins/fasapay/asset/javascript/style.js'; ?></script><br>
+<?php
 }
