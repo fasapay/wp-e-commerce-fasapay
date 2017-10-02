@@ -73,4 +73,22 @@ function get_validation($fp_hmac,$check){
 			return $validate = false;
 	}
 }
+
+function get_update_smart_report_log($order){
+	global $wpdb;
+	$selz = $wpdb->get_results( 'SELECT * FROM '.$wpdb->prefix . 'smart_report_log WHERE id_order = "'.$order.'"');
+	if ($selz[0]->nilai_pesanan == filter_input(INPUT_POST, 'fp_amnt')){
+		$data = $wpdb->insert($wpdb->prefix . "smart_report", array('id_order'=>$selz[0]->id_order, 'id_mem'=>$selz[0]->id_mem, 'tanggal_order'=>$selz[0]->tanggal_order,  'nilai_pesanan'=>$selz[0]->nilai_pesanan, 'pay_order'=>'Fasapay', 'uang_terima'=>$selz[0]->uang_terima, 'uang_terima'=>$selz[0]->uang_terima, 'status'=>'transaksi_lunas', 'pm_detail'=>$selz[0]->pm_detail, 'pm_produk'=>$selz[0]->pm_produk, 'sortorder'=>$selz[0]->sortorder,'aff_id'=>$selz[0]->aff_id));
+	}
+}
+
+function get_validation_lapak(){
+	if (strtoupper(filter_input(INPUT_POST, 'fp_paidto')) == strtoupper(get_merchantAccountNumber()) &&
+        strtoupper(filter_input(INPUT_POST, 'fp_store')) == strtoupper(get_option('store_name')) &&
+        strtoupper(filter_input(INPUT_POST, 'fp_hmac')) == strtoupper(get_hmac_hash())) {
+    		return $validate = true;
+	}else{
+			return $validate = false;
+	}
+}
 ?>
